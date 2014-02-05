@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/usr/lib/codetyphon/fpc/bin/x86_64-linux/fpc" Date="1391437155"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -vewnhi -Fi/home/dev/CodeTyphonProjects/lib/x86_64-linux -Fu/home/dev/CodeTyphonProjects/ -FU/home/dev/CodeTyphonProjects/lib/x86_64-linux/ -l projectsaga.lpr"/>
+</CONFIG>
