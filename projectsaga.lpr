@@ -167,7 +167,7 @@ var
   transaction_oracle: TSQLTransaction;
 
   // Variables para el envio de notificaciones
-  asunto,contenido,query_error:String;
+  asunto,contenido:String;
 
 begin
   // Inicializo variables relacionadas al archivo
@@ -379,16 +379,16 @@ begin
           query_oracle.SQL.Text:= string_sql_details;
           query_oracle.ExecSQL;
           query_oracle.SQL.Clear;
+
         except on E: Exception do
         begin
+
           contenido:='Error en archivo: '+new_file+#10;
           contenido:=contenido+'Item: '+IntToStr(items)+#10;
           contenido:=contenido+'Linea: '+#10+line+#10+E.Message;
           asunto:='ERROR EN EL REGISTRO DEL ITEM:::';
           // Envia el mensaje de error
           cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
-
-          WriteLn(query_error);
 
           Continue;
         end;
@@ -434,14 +434,11 @@ begin
   except on E: Exception do
     begin
       asunto:='ERROR AL REGISTRAR ARCHIVO:::';
-      contenido:=E.Message;
+      contenido:='Error en archivo: '+new_file+#10;
+      contenido:=contenido+E.Message;
       // Envia el mensaje de error
       cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
 
-      query_oracle.SQL.Clear;
-      query_oracle.SQL.Text:= query_error;
-      query_oracle.ExecSQL;
-      query_oracle.SQL.Clear;
     end;
   end;
 
