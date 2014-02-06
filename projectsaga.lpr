@@ -22,7 +22,85 @@ type
     procedure WriteHelp; virtual;
   end;
 
+const
+  const_remitente='sig@isco.com.pe';
+  const_destinario='jsalyrosas@isco.com.pe';
+  const_cc='';
+  const_bcc='';
+  const_asunto='ERROR:::';
+  const_contenido='Prueba';
+
 { saga }
+
+procedure cadena_mensaje(remitente:String=const_remitente;destinatario:String=const_destinario;cc:String=const_cc;bcc:String=const_bcc;asunto:String=const_asunto;contenido:String=const_contenido);
+var
+  // Variables para la notificacion de errores
+  var_remitente,var_destinatario,var_cc,var_bcc: String;
+  var_asunto,var_contenido,query_error: String;
+
+  // Crea una conezion a SIG
+  conexion_oracle: TOracleConnection;
+  query_oracle: TSQLQuery;
+  transaction_oracle: TSQLTransaction;
+begin
+
+  // Inicializo variables relacionadas al mensaje de error
+  var_remitente:=remitente;
+  var_destinatario:=destinatario;
+  var_cc:=cc;
+  var_bcc:=bcc;
+  var_asunto:=asunto;
+  var_contenido:=contenido;
+
+  //select f_send_mail('DE','PARA','CON COPIA','CON_COPIA_OCULTA ','ASUNTO','CUERPO') from dual;
+  query_error:='SELECT F_SEND_MAIL('''+var_remitente+''', '''+var_destinatario+''', ''';
+  query_error:=query_error+var_cc+''', '''+var_bcc+''', '''+var_asunto+''', '''+var_contenido+''') FROM DUAL';
+
+  conexion_oracle:=TOracleConnection.Create(nil);
+
+  conexion_oracle.HostName:='172.16.105.194';
+  conexion_oracle.DatabaseName:='orcl';
+  conexion_oracle.UserName:='sig';
+  conexion_oracle.Password:='sig2009';
+
+  try
+     conexion_oracle.Connected:=True;
+     //WriteLn('Conexion satisfactoria a SIG');
+
+     transaction_oracle:=TSQLTransaction.Create(nil);
+     query_oracle:=TSQLQuery.create(nil);
+
+     conexion_oracle.Transaction:=transaction_oracle;
+     transaction_oracle.DataBase:=conexion_oracle;
+     query_oracle.DataBase:=conexion_oracle;
+     query_oracle.Transaction:=transaction_oracle;
+
+     transaction_oracle.StartTransaction;
+
+     query_oracle.SQL.Clear;
+     query_oracle.SQL.Text:= query_error;
+     query_oracle.ExecSQL;
+     query_oracle.SQL.Clear;
+
+     transaction_oracle.Commit;
+     transaction_oracle.Free;
+
+     query_oracle.Close;
+     query_oracle.Free;
+
+     conexion_oracle.Close;
+     conexion_oracle.Free;
+
+  except on e: Exception do
+  begin
+    WriteLn('Error al realizar la conexion a la Base de Datos: ',e.Message);
+    WriteLn(e.Message);
+    Exit;
+  end;
+
+  end;
+
+end;
 
 function data_oracle():TOracleConnection;
 var
@@ -44,6 +122,7 @@ begin
   begin
     WriteLn('Error al realizar la conexion a la Base de Datos: ',e.Message);
     WriteLn(e.Message);
+    Exit;
   end;
 
   end;
@@ -63,7 +142,7 @@ var
   nombre_archivo:NameStr;
   extension_archivo:ExtStr;
   file_information: Stat;
-  i,j,items: Integer;
+  i,items: Integer;
 
   // Variables de la cabecera del archivo PO
   orden_compra,referencia,referenciax: String;
@@ -82,11 +161,16 @@ var
 
   string_sql,string_sql_details: String;
 
+  // Variables para la conexion y ejecucion de consultas en Oracle
   final_conexion: TOracleConnection;
   query_oracle: TSQLQuery;
   transaction_oracle: TSQLTransaction;
 
+  // Variables para el envio de notificaciones
+  asunto,contenido,query_error:String;
+
 begin
+  // Inicializo variables relacionadas al archivo
   directorio:='/home/';
   nombre_archivo:='';
   extension_archivo:='';
@@ -94,6 +178,10 @@ begin
   fecha_creacion:='';
   fecha_modificacion:='';
   fecha_ultimo_acceso:='';
+
+  // Inicializa variables relacionadas al envio de notificaciones
+  asunto:='';
+  contenido:='';
 
   FSplit(new_file,directorio,nombre_archivo,extension_archivo);
   nombre_completo_archivo:=nombre_archivo+extension_archivo;
@@ -186,147 +274,177 @@ begin
       if line<>'' then
       begin
         items:=items+1;
+        try
+          code_transaccion:= Copy(line,1,8);
+          ci:= Copy(line,9,2);
+          po_number:= Trim(Copy(line,11,15));
 
-        code_transaccion:= Copy(line,1,8);
-        ci:= Copy(line,9,2);
-        po_number:= Trim(Copy(line,11,15));
+          correlativo:= Trim(Copy(line,26,4));
+          if correlativo<>'' then begin correlativo_int:= StrToInt(correlativo); end
+          else begin correlativo_int:=0; end;
 
-        correlativo:= Trim(Copy(line,26,4));
-        if correlativo<>'' then begin correlativo_int:= StrToInt(correlativo); end
-        else begin correlativo_int:=0; end;
+          style:= Trim(Copy(line,30,25));
+          sku:= Trim(Copy(line,55,15));
+          item_description:= Trim(Copy(line,70,100));
+          composicion:= Trim(Copy(line,170,30));
+          num_ordcompra:= Trim(Copy(line,200,15));
+          modelo:= Trim(Copy(line,215,80));
 
-        style:= Trim(Copy(line,30,25));
-        sku:= Trim(Copy(line,55,15));
-        item_description:= Trim(Copy(line,70,100));
-        composicion:= Trim(Copy(line,170,30));
-        num_ordcompra:= Trim(Copy(line,200,15));
-        modelo:= Trim(Copy(line,215,80));
+          unidad_solicitadas:= Copy(line,295,10);
+          if unidad_solicitadas<>'' then begin unidad_solicitadas_int:= StrToInt(unidad_solicitadas); end
+          else begin unidad_solicitadas_int:=0; end;
 
-        unidad_solicitadas:= Copy(line,295,10);
-        if unidad_solicitadas<>'' then begin unidad_solicitadas_int:= StrToInt(unidad_solicitadas); end
-        else begin unidad_solicitadas_int:=0; end;
+          peso_neto:= Trim(Copy(line,305,10));
+          unimed_peso:= Trim(Copy(line,315,15));
+          talla:= Trim(Copy(line,330,25));
+          color:= Trim(Copy(line,355,25));
 
-        peso_neto:= Trim(Copy(line,305,10));
-        unimed_peso:= Trim(Copy(line,315,15));
-        talla:= Trim(Copy(line,330,25));
-        color:= Trim(Copy(line,355,25));
+          costo_unitario:= Copy(line,380,10);
+          if costo_unitario<>'' then begin costo_unitario_real:= StrToInt(costo_unitario); end
+          else begin costo_unitario_real:=0; end;
 
-        costo_unitario:= Copy(line,380,10);
-        if costo_unitario<>'' then begin costo_unitario_real:= StrToInt(costo_unitario); end
-        else begin costo_unitario_real:=0; end;
+          moneda:= Copy(line,390,3);
+          unid_carton:= Copy(line,393,5);
 
-        moneda:= Copy(line,390,3);
-        unid_carton:= Copy(line,393,5);
+          cartones:= Trim(Copy(line,398,5));
+          if cartones<>'' then begin cartones_real:= StrToInt(cartones); end
+          else begin cartones_real:=0; end;
 
-        cartones:= Trim(Copy(line,398,5));
-        if cartones<>'' then begin cartones_real:= StrToInt(cartones); end
-        else begin cartones_real:=0; end;
+          unimed_longitud:= Copy(line,403,10);
 
-        unimed_longitud:= Copy(line,403,10);
+          alto_carton:= Trim(Copy(line,413,10));
+          if alto_carton<>'' then begin alto_carton_real:= StrToInt(alto_carton); end
+          else begin alto_carton_real:=0; end;
 
-        alto_carton:= Trim(Copy(line,413,10));
-        if alto_carton<>'' then begin alto_carton_real:= StrToInt(alto_carton); end
-        else begin alto_carton_real:=0; end;
+          ancho_carton:= Trim(Copy(line,423,10));
+          if ancho_carton<>'' then begin ancho_carton_real:= StrToInt(ancho_carton); end
+          else begin ancho_carton_real:=0; end;
 
-        ancho_carton:= Trim(Copy(line,423,10));
-        if ancho_carton<>'' then begin ancho_carton_real:= StrToInt(ancho_carton); end
-        else begin ancho_carton_real:=0; end;
+          largo_carton:= Trim(Copy(line,433,10));
+          if largo_carton<>'' then begin largo_carton_real:= StrToInt(largo_carton); end
+          else begin largo_carton_real:=0; end;
 
-        largo_carton:= Trim(Copy(line,433,10));
-        if largo_carton<>'' then begin largo_carton_real:= StrToInt(largo_carton); end
-        else begin largo_carton_real:=0; end;
+          cantidad_productos:= cantidad_productos + unidad_solicitadas_int;
+          costo_total_por_item:= unidad_solicitadas_int * costo_unitario_real;
+          costo_total:=costo_total+costo_total_por_item;
+          {
+          // Imprime las variables necesarias de cada detalle
+          WriteLn('Codigo de Transaccion:', code_transaccion);
+          WriteLn('CI:', ci);
+          WriteLn('Orden de Compra - PO Number:', po_number);
+          WriteLn('Correlativo:', correlativo_int);
+          WriteLn('Style:', style);
+          WriteLn('SKU:', sku);
+          WriteLn('Item Description:', item_description);
+          WriteLn('Composicion:', composicion);
+          WriteLn('Numero de Orden de compra:', num_ordcompra);
+          WriteLn('Modelo:', modelo);
+          WriteLn('Unidades solicitadas:', unidad_solicitadas_int);
+          WriteLn('Peso Neto:', peso_neto);
+          WriteLn('Unidad de Medida (Peso):', unimed_peso);
+          WriteLn('Talla:', talla);
+          WriteLn('Color:', color);
+          WriteLn('Costo Unitario:', costo_unitario_real);
+          WriteLn('Moneda:', moneda);
+          WriteLn('Unidad de carton:', unid_carton);
+          WriteLn('Cartones:', cartones_real);
+          WriteLn('Unidad de medida (Longitud):', unimed_longitud);
+          WriteLn('Alto carton:', alto_carton_real);
+          WriteLn('Ancho carton:', ancho_carton_real);
+          WriteLn('Largo carton:', largo_carton_real);
+          WriteLn('Costo total del item:', costo_total_por_item);
+          }
 
-        cantidad_productos:= cantidad_productos + unidad_solicitadas_int;
-        costo_total_por_item:= unidad_solicitadas_int * costo_unitario_real;
-        costo_total:=costo_total+costo_total_por_item;
-        {
-        // Imprime las variables necesarias de cada detalle
-        WriteLn('Codigo de Transaccion:', code_transaccion);
-        WriteLn('CI:', ci);
-        WriteLn('Orden de Compra - PO Number:', po_number);
-        WriteLn('Correlativo:', correlativo_int);
-        WriteLn('Style:', style);
-        WriteLn('SKU:', sku);
-        WriteLn('Item Description:', item_description);
-        WriteLn('Composicion:', composicion);
-        WriteLn('Numero de Orden de compra:', num_ordcompra);
-        WriteLn('Modelo:', modelo);
-        WriteLn('Unidades solicitadas:', unidad_solicitadas_int);
-        WriteLn('Peso Neto:', peso_neto);
-        WriteLn('Unidad de Medida (Peso):', unimed_peso);
-        WriteLn('Talla:', talla);
-        WriteLn('Color:', color);
-        WriteLn('Costo Unitario:', costo_unitario_real);
-        WriteLn('Moneda:', moneda);
-        WriteLn('Unidad de carton:', unid_carton);
-        WriteLn('Cartones:', cartones_real);
-        WriteLn('Unidad de medida (Longitud):', unimed_longitud);
-        WriteLn('Alto carton:', alto_carton_real);
-        WriteLn('Ancho carton:', ancho_carton_real);
-        WriteLn('Largo carton:', largo_carton_real);
-        WriteLn('Costo total del item:', costo_total_por_item);
-        }
+          string_sql_details:='INSERT INTO BUSCAR_ARCHIVOS_DET (EMPRESA, RUTA, ARCHIVO,';
+          string_sql_details:=string_sql_details+' CODE_TRANSACCION, CI, PO_NUMBER, CORRELATIVO, STYLE, SKU,';
+          string_sql_details:=string_sql_details+' ITEM_DESCRIPCION, COMPOSICION, NUM_ORDCOMPRA, MODELO,';
+          string_sql_details:=string_sql_details+' UNID_SOLICITADAS, PESO_NETO, UNIMED_PESO, TALLA, COLOR,';
+          string_sql_details:=string_sql_details+' COSTO_UNITARIO, MONEDA, UNID_CARTON, CARTONES,';
+          string_sql_details:=string_sql_details+' UNIMED_LONGTIUD, ALTO_CARTON, ANCHO_CARTON, LARGO_CARTON,';
+          string_sql_details:=string_sql_details+' FECHA_MINIMA, ARCHIVO_MINIMA, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
+          string_sql_details:=string_sql_details+' NUME_ORDEN) VALUES(''001'', ''';
+          string_sql_details:=string_sql_details+directorio+''', '''+nombre_completo_archivo+''', ''';
+          string_sql_details:=string_sql_details+code_transaccion+''', '''+ci+''', '''+po_number+''', ';
+          string_sql_details:=string_sql_details+IntToStr(correlativo_int)+', '''+style+''', '''+sku+''', ''';
+          string_sql_details:=string_sql_details+item_description+''', '''+composicion+''', '''+num_ordcompra+''', '''+modelo+''', ';
+          string_sql_details:=string_sql_details+IntToStr(unidad_solicitadas_int)+', '''+peso_neto+''', '''+unimed_peso+''', '''+talla+''', '''+color+''', ';
+          string_sql_details:=string_sql_details+IntToStr(costo_unitario_real)+', '''+moneda+''', '''+unid_carton+''', ''';
+          string_sql_details:=string_sql_details+IntToStr(cartones_real)+''', '''+unimed_longitud+''', '+IntToStr(alto_carton_real)+', ';
+          string_sql_details:=string_sql_details+IntToStr(ancho_carton_real)+', '+IntToStr(largo_carton_real)+', ';
+          string_sql_details:=string_sql_details+'NULL, NULL, NULL, NULL, NULL, NULL)';
 
-        string_sql_details:='INSERT INTO BUSCAR_ARCHIVOS_DET (EMPRESA, RUTA, ARCHIVO,';
-        string_sql_details:=string_sql_details+' CODE_TRANSACCION, CI, PO_NUMBER, CORRELATIVO, STYLE, SKU,';
-        string_sql_details:=string_sql_details+' ITEM_DESCRIPCION, COMPOSICION, NUM_ORDCOMPRA, MODELO,';
-        string_sql_details:=string_sql_details+' UNID_SOLICITADAS, PESO_NETO, UNIMED_PESO, TALLA, COLOR,';
-        string_sql_details:=string_sql_details+' COSTO_UNITARIO, MONEDA, UNID_CARTON, CARTONES,';
-        string_sql_details:=string_sql_details+' UNIMED_LONGTIUD, ALTO_CARTON, ANCHO_CARTON, LARGO_CARTON,';
-        string_sql_details:=string_sql_details+' FECHA_MINIMA, ARCHIVO_MINIMA, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
-        string_sql_details:=string_sql_details+' NUME_ORDEN) VALUES(''001'', ''';
-        string_sql_details:=string_sql_details+directorio+''', '''+nombre_completo_archivo+''', ''';
-        string_sql_details:=string_sql_details+code_transaccion+''', '''+ci+''', '''+po_number+''', ';
-        string_sql_details:=string_sql_details+IntToStr(correlativo_int)+', '''+style+''', '''+sku+''', ''';
-        string_sql_details:=string_sql_details+item_description+''', '''+composicion+''', '''+num_ordcompra+''', '''+modelo+''', ';
-        string_sql_details:=string_sql_details+IntToStr(unidad_solicitadas_int)+', '''+peso_neto+''', '''+unimed_peso+''', '''+talla+''', '''+color+''', ';
-        string_sql_details:=string_sql_details+IntToStr(costo_unitario_real)+', '''+moneda+''', '''+unid_carton+''', ''';
-        string_sql_details:=string_sql_details+IntToStr(cartones_real)+''', '''+unimed_longitud+''', '+IntToStr(alto_carton_real)+', ';
-        string_sql_details:=string_sql_details+IntToStr(ancho_carton_real)+', '+IntToStr(largo_carton_real)+', ';
-        string_sql_details:=string_sql_details+'NULL, NULL, NULL, NULL, NULL, NULL)';
+          //WriteLn('Cadena a Ejecutar es:'+string_sql_details);
 
-        //WriteLn('Cadena a Ejecutar es:'+string_sql_details);
+          query_oracle.SQL.Clear;
+          query_oracle.SQL.Text:= string_sql_details;
+          query_oracle.ExecSQL;
+          query_oracle.SQL.Clear;
+        except on E: Exception do
+        begin
+          contenido:='Error en archivo: '+new_file+#10;
+          contenido:=contenido+'Item: '+IntToStr(items)+#10;
+          contenido:=contenido+'Linea: '+#10+line+#10+E.Message;
+          asunto:='ERROR EN EL REGISTRO DEL ITEM:::';
+          // Envia el mensaje de error
+          cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
 
-        query_oracle.SQL.Clear;
-        query_oracle.SQL.Text:= string_sql_details;
-        query_oracle.ExecSQL;
-        query_oracle.SQL.Clear;
+          WriteLn(query_error);
 
+          Continue;
+        end;
       end;
     end;
 
   end;
+  end;
+
 
   AssignFile(file_po, new_file);
   Reset(file_po);
   filesize_int:= FileSize(file_po);
 
-  string_sql:='INSERT INTO BUSCAR_ARCHIVOS (EMPRESA, RUTA, ARCHIVO, TAMANO, FECHA, REFERENCIA,';
-  string_sql:=string_sql+' TOTAL_ITEMS, CANTIDAD_PRODUCTOS, FECHA_HORAC, PROVEEDOR,';
-  string_sql:=string_sql+' MONTO_TOTAL, EMBARQUE, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
-  string_sql:=string_sql+' NUME_ORDEN, FECHA_ASIGNACION_ORDEN, FECHA_MINIMA, REFERENCIAX,';
-  string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO) VALUES(';
-  string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
-  string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
-  string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
-  string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
-  string_sql:=string_sql+beneficiario+''')';
+  try
+    string_sql:='INSERT INTO BUSCAR_ARCHIVOS (EMPRESA, RUTA, ARCHIVO, TAMANO, FECHA, REFERENCIA,';
+    string_sql:=string_sql+' TOTAL_ITEMS, CANTIDAD_PRODUCTOS, FECHA_HORAC, PROVEEDOR,';
+    string_sql:=string_sql+' MONTO_TOTAL, EMBARQUE, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
+    string_sql:=string_sql+' NUME_ORDEN, FECHA_ASIGNACION_ORDEN, FECHA_MINIMA, REFERENCIAX,';
+    string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO) VALUES(';
+    string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
+    string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
+    string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
+    string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
+    string_sql:=string_sql+beneficiario+''')';
 
-  //WriteLn('Cadena a Ejecutar es:'+string_sql);
+    //WriteLn('Cadena a Ejecutar es:'+string_sql);
 
-  query_oracle.SQL.Clear;
-  query_oracle.SQL.Text:= string_sql;
-  query_oracle.ExecSQL;
-  query_oracle.SQL.Clear;
-  {
-  WriteLn();
-  WriteLn('Orden de compra:', orden_compra);
-  WriteLn('ReferenciaX:', referenciax);
-  WriteLn('Numero de Lineas Encontradas en la cabecera:', i);
-  WriteLn('Numero de Lineas Encontradas en los detalles:', items);
-  WriteLn('Cantidad total de Productos:', cantidad_productos);
-  WriteLn('Costo total de Productos:', costo_total);
-  }
+    query_oracle.SQL.Clear;
+    query_oracle.SQL.Text:= string_sql;
+    query_oracle.ExecSQL;
+    query_oracle.SQL.Clear;
+    {
+    WriteLn();
+    WriteLn('Orden de compra:', orden_compra);
+    WriteLn('ReferenciaX:', referenciax);
+    WriteLn('Numero de Lineas Encontradas en la cabecera:', i);
+    WriteLn('Numero de Lineas Encontradas en los detalles:', items);
+    WriteLn('Cantidad total de Productos:', cantidad_productos);
+    WriteLn('Costo total de Productos:', costo_total);
+    }
+
+  except on E: Exception do
+    begin
+      asunto:='ERROR AL REGISTRAR ARCHIVO:::';
+      contenido:=E.Message;
+      // Envia el mensaje de error
+      cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+
+      query_oracle.SQL.Clear;
+      query_oracle.SQL.Text:= query_error;
+      query_oracle.ExecSQL;
+      query_oracle.SQL.Clear;
+    end;
+  end;
+
   transaction_oracle.Commit;
   transaction_oracle.Free;
 
@@ -381,6 +499,7 @@ begin
   end;
 
   // stop program loop
+  ReadLn();
   Terminate;
 end;
 
