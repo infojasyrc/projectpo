@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, CustApp,
-  sqldb, oracleconnection, BaseUnix, Dos;
+  sqldb, oracleconnection, BaseUnix, Dos, envia_notificaciones;
 
 type
 
@@ -22,85 +22,7 @@ type
     procedure WriteHelp; virtual;
   end;
 
-const
-  const_remitente='sig@isco.com.pe';
-  const_destinario='jsalyrosas@isco.com.pe';
-  const_cc='';
-  const_bcc='';
-  const_asunto='ERROR:::';
-  const_contenido='Prueba';
-
 { saga }
-
-procedure cadena_mensaje(remitente:String=const_remitente;destinatario:String=const_destinario;cc:String=const_cc;bcc:String=const_bcc;asunto:String=const_asunto;contenido:String=const_contenido);
-var
-  // Variables para la notificacion de errores
-  var_remitente,var_destinatario,var_cc,var_bcc: String;
-  var_asunto,var_contenido,query_error: String;
-
-  // Crea una conezion a SIG
-  conexion_oracle: TOracleConnection;
-  query_oracle: TSQLQuery;
-  transaction_oracle: TSQLTransaction;
-begin
-
-  // Inicializo variables relacionadas al mensaje de error
-  var_remitente:=remitente;
-  var_destinatario:=destinatario;
-  var_cc:=cc;
-  var_bcc:=bcc;
-  var_asunto:=asunto;
-  var_contenido:=contenido;
-
-  //select f_send_mail('DE','PARA','CON COPIA','CON_COPIA_OCULTA ','ASUNTO','CUERPO') from dual;
-  query_error:='SELECT F_SEND_MAIL('''+var_remitente+''', '''+var_destinatario+''', ''';
-  query_error:=query_error+var_cc+''', '''+var_bcc+''', '''+var_asunto+''', '''+var_contenido+''') FROM DUAL';
-
-  conexion_oracle:=TOracleConnection.Create(nil);
-
-  conexion_oracle.HostName:='172.16.105.194';
-  conexion_oracle.DatabaseName:='orcl';
-  conexion_oracle.UserName:='sig';
-  conexion_oracle.Password:='sig2009';
-
-  try
-     conexion_oracle.Connected:=True;
-     //WriteLn('Conexion satisfactoria a SIG');
-
-     transaction_oracle:=TSQLTransaction.Create(nil);
-     query_oracle:=TSQLQuery.create(nil);
-
-     conexion_oracle.Transaction:=transaction_oracle;
-     transaction_oracle.DataBase:=conexion_oracle;
-     query_oracle.DataBase:=conexion_oracle;
-     query_oracle.Transaction:=transaction_oracle;
-
-     transaction_oracle.StartTransaction;
-
-     query_oracle.SQL.Clear;
-     query_oracle.SQL.Text:= query_error;
-     query_oracle.ExecSQL;
-     query_oracle.SQL.Clear;
-
-     transaction_oracle.Commit;
-     transaction_oracle.Free;
-
-     query_oracle.Close;
-     query_oracle.Free;
-
-     conexion_oracle.Close;
-     conexion_oracle.Free;
-
-  except on e: Exception do
-  begin
-    WriteLn('Error al realizar la conexion a la Base de Datos: ',e.Message);
-    WriteLn(e.Message);
-    Exit;
-  end;
-
-  end;
-
-end;
 
 function data_oracle():TOracleConnection;
 var
@@ -133,7 +55,7 @@ procedure filepo(new_file: String);
 var
   // Variables relacionadas al archivo PO
   content_file: TextFile;
-  //content_file: File of Str;
+
   file_po: File of LongInt;
   filesize_int: LongInt;
   line,fecha_creacion,fecha_modificacion,fecha_ultimo_acceso: String;
@@ -172,6 +94,7 @@ var
   cantidad_items_errados:Integer;
 
 begin
+
   // Inicializo variables relacionadas al archivo
   directorio:='/home/';
   nombre_archivo:='';
@@ -438,31 +361,36 @@ begin
     query_oracle.Close;
     query_oracle.Free;
 
-    // Envia mensaje de notificacion de registro de archivo
     asunto:='RESGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
     contenido:='Archivo registrado: '+new_file+#10;
     contenido:=contenido+'Numero de items encontrados: '+IntToStr(items)+#10;
     contenido:=contenido+'Numero de items errados: '+IntToStr(cantidad_items_errados)+#10;
-    cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+
+    // Envia mensaje de notificacion de registro de archivo
+    notificacion('','','','',asunto,contenido);
 
   except on E: Exception do
     begin
       asunto:='ERROR AL REGISTRAR ARCHIVO:::';
       contenido:='Error en archivo: '+new_file+#10;
       contenido:=contenido+E.Message;
+
       // Envia el mensaje de error
-      cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+      notificacion('','','','',asunto,contenido);
 
     end;
   end;
 
   if item_errors_flag=True then
   begin
-    // Envia el mensaje de error
+
     asunto:='ERROR AL REGISTRAR ITEMS DEL ARCHIVO:::';
     contenido:='Error en archivo: '+new_file+#10;
     contenido:=contenido+contenido_items;
-    cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+
+    // Envia el mensaje de error
+    notificacion('','','','',asunto,contenido);
+
   end;
 
   transaction_oracle.Free;
@@ -481,6 +409,7 @@ var
   archivo: String;
   numero_parametros: Integer;
 begin
+  {
   // quick check parameters
   ErrorMsg:=CheckOptions('h','help');
   if ErrorMsg<>'' then begin
@@ -495,7 +424,7 @@ begin
     Terminate;
     Exit;
   end;
-
+  }
   { add your program here }
   numero_parametros:=ParamCount;
 

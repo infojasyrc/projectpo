@@ -16,6 +16,7 @@ class MyHandler(PatternMatchingEventHandler):
 
     def process(self, event):
         command = '/home/dev/CodeTyphonProjects/projectpo/projectsaga "%s"' % event.src_path
+        
         """
         event.event_type
             'modified' | 'created' | 'moved' | 'deleted'
@@ -25,15 +26,17 @@ class MyHandler(PatternMatchingEventHandler):
             path/to/observed/file
         """
         
-        try:
+        try: 
             # Execute command to mount folder
             p = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             # Get output
             rs_cmd = p.stdout.read()
+            
             if rs_cmd=="":
                 print "Archivo registrado exitosamente: %s" % event.src_path
             else:
                 print "Error al ingresar el archivo: %s" % event.src_path
+            
             
         except CalledProcessError:
             err = traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
