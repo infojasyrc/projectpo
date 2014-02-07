@@ -167,7 +167,9 @@ var
   transaction_oracle: TSQLTransaction;
 
   // Variables para el envio de notificaciones
-  asunto,contenido:String;
+  asunto,contenido,contenido_items:String;
+  item_errors_flag:Boolean;
+  cantidad_items_errados:Integer;
 
 begin
   // Inicializo variables relacionadas al archivo
@@ -182,6 +184,9 @@ begin
   // Inicializa variables relacionadas al envio de notificaciones
   asunto:='';
   contenido:='';
+  contenido_items:='';
+  item_errors_flag:=False;
+  cantidad_items_errados:=0;
 
   FSplit(new_file,directorio,nombre_archivo,extension_archivo);
   nombre_completo_archivo:=nombre_archivo+extension_archivo;
@@ -382,13 +387,11 @@ begin
 
         except on E: Exception do
         begin
+          item_errors_flag:=True;
+          cantidad_items_errados:=cantidad_items_errados+1;
 
-          contenido:='Error en archivo: '+new_file+#10;
-          contenido:=contenido+'Item: '+IntToStr(items)+#10;
-          contenido:=contenido+'Linea: '+#10+line+#10+E.Message;
-          asunto:='ERROR EN EL REGISTRO DEL ITEM:::';
-          // Envia el mensaje de error
-          cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+          contenido_items:=contenido_items+'Item: '+IntToStr(items)+#10;
+          contenido_items:=contenido_items+'Linea: '+#10+line+#10+E.Message;
 
           Continue;
         end;
@@ -397,7 +400,6 @@ begin
 
   end;
   end;
-
 
   AssignFile(file_po, new_file);
   Reset(file_po);
@@ -431,6 +433,18 @@ begin
     WriteLn('Costo total de Productos:', costo_total);
     }
 
+    transaction_oracle.Commit;
+
+    query_oracle.Close;
+    query_oracle.Free;
+
+    // Envia mensaje de notificacion de registro de archivo
+    asunto:='RESGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
+    contenido:='Archivo registrado: '+new_file+#10;
+    contenido:=contenido+'Numero de items encontrados: '+IntToStr(items)+#10;
+    contenido:=contenido+'Numero de items errados: '+IntToStr(cantidad_items_errados)+#10;
+    cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+
   except on E: Exception do
     begin
       asunto:='ERROR AL REGISTRAR ARCHIVO:::';
@@ -442,11 +456,16 @@ begin
     end;
   end;
 
-  transaction_oracle.Commit;
-  transaction_oracle.Free;
+  if item_errors_flag=True then
+  begin
+    // Envia el mensaje de error
+    asunto:='ERROR AL REGISTRAR ITEMS DEL ARCHIVO:::';
+    contenido:='Error en archivo: '+new_file+#10;
+    contenido:=contenido+contenido_items;
+    cadena_mensaje(const_remitente,const_destinario,const_cc,const_bcc,asunto,contenido);
+  end;
 
-  query_oracle.Close;
-  query_oracle.Free;
+  transaction_oracle.Free;
 
   final_conexion.Close;
   final_conexion.Free;

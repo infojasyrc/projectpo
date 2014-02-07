@@ -1,3 +1,9 @@
 Manage PO Files.
 Programm language: Free Pascal.
 Database: Oracle
+
+Features:
+-Read Header1(Line1), Header2(Line2), Header3(Line3)
+-Read Detail(Since line 4+)
+-Send a message to an administrator when a file is successfully registered.
+-Send a message to an administrator when errors happened.
