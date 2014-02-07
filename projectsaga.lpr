@@ -361,7 +361,7 @@ begin
     query_oracle.Close;
     query_oracle.Free;
 
-    asunto:='RESGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
+    asunto:='REGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
     contenido:='Archivo registrado: '+new_file+#10;
     contenido:=contenido+'Numero de items encontrados: '+IntToStr(items)+#10;
     contenido:=contenido+'Numero de items errados: '+IntToStr(cantidad_items_errados)+#10;

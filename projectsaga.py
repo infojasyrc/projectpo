@@ -1,10 +1,11 @@
 '''
 Created on 30/01/2014
 
-@author: jsalyrosas
+@author: Jose Antonio Sal y Rosas Celi
 '''
 
 import sys
+import os
 import time
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -15,16 +16,11 @@ class MyHandler(PatternMatchingEventHandler):
     patterns=["*.PO", "*.po"]
 
     def process(self, event):
-        command = '/home/dev/CodeTyphonProjects/projectpo/projectsaga "%s"' % event.src_path
+        path = os.path.dirname(__file__)
+        command = "projectsaga"
+        launcher = os.path.join(path, command)
         
-        """
-        event.event_type
-            'modified' | 'created' | 'moved' | 'deleted'
-        event.is_directory
-            True | False
-        event.src_path
-            path/to/observed/file
-        """
+        command = '%s "%s"' % (launcher, event.src_path)
         
         try: 
             # Execute command to mount folder
@@ -37,11 +33,9 @@ class MyHandler(PatternMatchingEventHandler):
             else:
                 print "Error al ingresar el archivo: %s" % event.src_path
             
-            
         except CalledProcessError:
             err = traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
             print err
-        
 
     def on_modified(self, event):
         pass
