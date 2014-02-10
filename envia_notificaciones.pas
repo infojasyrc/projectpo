@@ -67,8 +67,9 @@ begin
      databasename:=Ini.ReadString('saga_db','database','');
      username:=Ini.ReadString('saga_db','username','');
      password:=Ini.ReadString('saga_db','password','');
-     //puerto_archivo := INI.ReadInteger('PARAMETROS','PUERTOF',7462);
+
      Ini.Free;
+
   except on e: Exception do
   begin
     WriteLn('Error al leer el archivo de configuracion: ',e.Message);
@@ -169,7 +170,7 @@ begin
      const_bcc:=Ini.ReadString('mail','bcc','');
      const_asunto:=Ini.ReadString('mail','subject','');
      const_contenido:=Ini.ReadString('mail','content','');
-     //puerto_archivo := INI.ReadInteger('PARAMETROS','PUERTOF',7462);
+
      Ini.Free;
 
   except on e: Exception do

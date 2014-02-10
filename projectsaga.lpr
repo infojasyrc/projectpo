@@ -67,7 +67,8 @@ var
   nombre_archivo:NameStr;
   extension_archivo:ExtStr;
   file_information: Stat;
-  i,items: Integer;
+  i,items,estado: Integer;
+  descripcion: String;
 
   // Variables de la cabecera del archivo PO
   orden_compra,referencia,referenciax: String;
@@ -106,6 +107,8 @@ begin
   fecha_creacion:='';
   fecha_modificacion:='';
   fecha_ultimo_acceso:='';
+  estado:=0;
+  descripcion:='';
 
   // Inicializa variables relacionadas al envio de notificaciones
   asunto:='';
@@ -116,25 +119,6 @@ begin
 
   FSplit(new_file,directorio,nombre_archivo,extension_archivo);
   nombre_completo_archivo:=nombre_archivo+extension_archivo;
-
-  {
-  if fpstat(new_file,file_information)<>0 then
-  begin
-    WriteLn('Fstat failed. Numero de Error : ',fpgeterrno);
-    Halt (1);
-  end;
-  //writeln ('Inode   : ',file_information.st_ino);
-  //writeln ('Mode    : ',file_information.st_mode);
-  //writeln ('nlink   : ',file_information.st_nlink);
-  //writeln ('uid     : ',file_information.st_uid);
-  //writeln ('gid     : ',file_information.st_gid);
-  //writeln ('rdev    : ',file_information.st_rdev);
-  //writeln ('Size    : ',file_information.st_size);
-  //writeln ('Blksize : ',file_information.st_blksize);
-  //writeln ('Blocks  : ',file_information.st_blocks);
-  //fecha_creacion:= FormatDateTime('DD-MMM-YYYY HH:mm:ss',FileDateTodateTime(file_information.st_atime));
-
-  }
 
   FpStat(new_file,file_information);
   fecha_creacion:= FormatDateTime('DD-MMM-YYYY',FileDateTodateTime(file_information.st_atime));
@@ -332,16 +316,28 @@ begin
   filesize_int:= FileSize(file_po);
 
   try
+
+    if item_errors_flag=False then
+    begin
+      estado:=1;
+      descripcion:='Registro de archivo exitoso.';
+    end
+    else
+    begin
+      estado:=0;
+      descripcion:='Registro de archivo con errores.'+#10+contenido_items;
+    end;
+
     string_sql:='INSERT INTO BUSCAR_ARCHIVOS (EMPRESA, RUTA, ARCHIVO, TAMANO, FECHA, REFERENCIA,';
     string_sql:=string_sql+' TOTAL_ITEMS, CANTIDAD_PRODUCTOS, FECHA_HORAC, PROVEEDOR,';
     string_sql:=string_sql+' MONTO_TOTAL, EMBARQUE, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
     string_sql:=string_sql+' NUME_ORDEN, FECHA_ASIGNACION_ORDEN, FECHA_MINIMA, REFERENCIAX,';
-    string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO) VALUES(';
+    string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO, ESTADO, DESCRIPCION) VALUES(';
     string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
     string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
     string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
     string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
-    string_sql:=string_sql+beneficiario+''')';
+    string_sql:=string_sql+beneficiario+''', '+IntToStr(estado)+', '''+descripcion+''')';
 
     //WriteLn('Cadena a Ejecutar es:'+string_sql);
 
@@ -363,7 +359,7 @@ begin
 
     query_oracle.Close;
     query_oracle.Free;
-
+    {
     asunto:='REGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
     contenido:='Archivo registrado: '+new_file+#10;
     contenido:=contenido+'Numero de items encontrados: '+IntToStr(items)+#10;
@@ -371,6 +367,7 @@ begin
 
     // Envia mensaje de notificacion de registro de archivo
     notificacion('','','','',asunto,contenido);
+    }
 
   except on E: Exception do
     begin

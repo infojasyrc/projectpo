@@ -11,7 +11,6 @@ from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from subprocess import Popen, CalledProcessError, PIPE, STDOUT
 import traceback
-import json
 from datetime import datetime
 import ConfigParser
 
