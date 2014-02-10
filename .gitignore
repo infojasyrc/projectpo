@@ -1,6 +1,6 @@
-.project
-.pydevproject
-.pyc
-.log
-.ini
-.cfg
+*.project
+*.pydevproject
+*.pyc
+*.log
+*.ini
+*.cfg
