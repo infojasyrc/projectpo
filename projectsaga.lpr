@@ -371,6 +371,9 @@ begin
 
   except on E: Exception do
     begin
+
+      WriteLn('Error en archivo: ',new_file);
+
       asunto:='ERROR AL REGISTRAR ARCHIVO:::';
       contenido:='Error en archivo: '+new_file+#10;
       contenido:=contenido+E.Message;
@@ -383,6 +386,8 @@ begin
 
   if item_errors_flag=True then
   begin
+
+    WriteLn('Error en los items: ',contenido_items);
 
     asunto:='ERROR AL REGISTRAR ITEMS DEL ARCHIVO:::';
     contenido:='Error en archivo: '+new_file+#10;

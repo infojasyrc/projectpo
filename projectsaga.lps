@@ -8,11 +8,12 @@
         <Filename Value="projectsaga.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="projectsaga"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="16" Y="364"/>
-        <UsageCount Value="80"/>
+        <TopLine Value="384"/>
+        <CursorPos X="51" Y="393"/>
+        <UsageCount Value="81"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -27,12 +28,11 @@
         <Filename Value="envia_notificaciones.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="envia_notificaciones"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="84" Y="14"/>
-        <UsageCount Value="29"/>
+        <CursorPos X="64" Y="14"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
       </Unit2>
     </Units>

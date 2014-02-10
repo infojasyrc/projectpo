@@ -11,7 +11,7 @@ uses
 
 const
   const_remitente='sig@isco.com.pe';
-  const_destinatario='jsalyrosas@isco.com.pe,mreyes@isco.com.pe,ozelada@isco.com.pe';
+  const_destinatario='jsalyrosas@isco.com.pe,mreyes@isco.com.pe';
   const_cc='';
   const_bcc='';
   const_asunto='ERROR:::';

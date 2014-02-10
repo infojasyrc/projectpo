@@ -11,12 +11,14 @@ from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from subprocess import Popen, CalledProcessError, PIPE, STDOUT
 import traceback
+import json
 
 class MyHandler(PatternMatchingEventHandler):
     patterns=["*.PO", "*.po"]
 
     def process(self, event):
-        user_to_notify = "Oscar"
+        user_to_notify = self.read_config()
+        
         path = os.path.dirname(__file__)
         command = "projectsaga"
         command_alert = "enviar_mensaje"
@@ -33,19 +35,29 @@ class MyHandler(PatternMatchingEventHandler):
             rs_cmd = p.stdout.read()
             
             if rs_cmd=="":
-                content_alert = "Archivo registrado exitosamente: %s" % event.src_path
-                # print content_alert
-                full_command_alert = '%s "%s" "%s"' % (launcher_alert, user_to_notify, content_alert)
-                
-                Popen(full_command_alert, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                print "Archivo registrado exitosamente: %s" % event.src_path
                 
             else:
-                print "Error al ingresar el archivo: %s" % event.src_path
+                content_alert = "Error al ingresar el archivo: %s" % event.src_path
+                #print content_alert
+                full_command_alert = '%s "%s" "%s"' % (launcher_alert, user_to_notify, content_alert)
+                
+                Popen(full_command_alert, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True) 
             
         except CalledProcessError:
             err = traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
             print err
-
+    
+    def read_config(self):
+        config_file = os.path.join(os.path.dirname(__file__),"config")
+        json_data = open(config_file)
+        dict_config = json.load(json_data)
+        json_data.close()
+        
+        usertonotify = str(dict_config['basic']['user'])
+        
+        return usertonotify
+    
     def on_modified(self, event):
         pass
 
