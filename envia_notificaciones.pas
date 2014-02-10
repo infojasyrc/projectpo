@@ -5,34 +5,108 @@ unit envia_notificaciones;
 interface
 
 uses
-  Classes, SysUtils,sqldb, oracleconnection;
+  Classes, SysUtils,sqldb, oracleconnection, IniFiles;
   procedure notificacion(remitente:String;destinatario:String;cc:String;bcc:String;asunto:String;contenido:String);
   procedure ejecuta_query(string_query:String);
-
-const
-  const_remitente='sig@isco.com.pe';
-  const_destinatario='jsalyrosas@isco.com.pe,mreyes@isco.com.pe';
-  const_cc='';
-  const_bcc='';
-  const_asunto='ERROR:::';
-  const_contenido='Mensaje:::';
+  function datos_notificaciones():TStringList;
+  function datos_saga_conexion():TStringList;
 
 implementation
 
+function datos_notificaciones():TStringList;
+var
+  parameters_conexion: TStringList;
+  hostname,databasename,username,password: String;
+  config_file: String;
+  Ini:TIniFile;
+
+begin
+  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+
+  try
+     Ini:= TIniFile.Create(config_file);
+
+     hostname:=Ini.ReadString('notification','hostname','');
+     databasename:=Ini.ReadString('notification','database','');
+     username:=Ini.ReadString('notification','username','');
+     password:=Ini.ReadString('notification','password','');
+
+     Ini.Free;
+
+  except on e: Exception do
+  begin
+    WriteLn('Error al leer el archivo de configuracion: ',e.Message);
+    WriteLn(e.Message);
+    Exit;
+  end;
+
+  end;
+
+  parameters_conexion:=TStringList.Create;
+  parameters_conexion.Add(hostname);
+  parameters_conexion.Add(databasename);
+  parameters_conexion.Add(username);
+  parameters_conexion.Add(password);
+
+  result:=parameters_conexion;
+end;
+
+function datos_saga_conexion():TStringList;
+var
+  parameters_conexion: TStringList;
+  hostname,databasename,username,password: String;
+  config_file: String;
+  Ini:TIniFile;
+
+begin
+  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+
+  try
+     Ini:= TIniFile.Create(config_file);
+     hostname:=Ini.ReadString('saga_db','hostname','');
+     databasename:=Ini.ReadString('saga_db','database','');
+     username:=Ini.ReadString('saga_db','username','');
+     password:=Ini.ReadString('saga_db','password','');
+     //puerto_archivo := INI.ReadInteger('PARAMETROS','PUERTOF',7462);
+     Ini.Free;
+  except on e: Exception do
+  begin
+    WriteLn('Error al leer el archivo de configuracion: ',e.Message);
+    WriteLn(e.Message);
+    Exit;
+  end;
+
+  end;
+
+  parameters_conexion:=TStringList.Create;
+  parameters_conexion.Add(hostname);
+  parameters_conexion.Add(databasename);
+  parameters_conexion.Add(username);
+  parameters_conexion.Add(password);
+
+  result:=parameters_conexion;
+
+end;
+
 procedure ejecuta_query(string_query:String);
 var
-  // Crea una conezion a SIG
+  // Crea una conexion a SIG
   conexion_oracle: TOracleConnection;
   query_oracle: TSQLQuery;
   transaction_oracle: TSQLTransaction;
 
+  // Almacena los parametros de la conexion
+  parameters_conexion: TStringList;
+
 begin
+  parameters_conexion:=datos_notificaciones();
+
   conexion_oracle:=TOracleConnection.Create(nil);
 
-  conexion_oracle.HostName:='172.16.105.194';
-  conexion_oracle.DatabaseName:='orcl';
-  conexion_oracle.UserName:='sig';
-  conexion_oracle.Password:='sig2009';
+  conexion_oracle.HostName:=parameters_conexion[0];
+  conexion_oracle.DatabaseName:=parameters_conexion[1];
+  conexion_oracle.UserName:=parameters_conexion[2];
+  conexion_oracle.Password:=parameters_conexion[3];
 
   try
      conexion_oracle.Connected:=True;
@@ -77,8 +151,35 @@ procedure notificacion(remitente:String;destinatario:String;cc:String;bcc:String
 var
   var_remitente,var_destinatario,var_cc,var_bcc: String;
   var_asunto,var_contenido,string_query: String;
+  config_file: String;
+  Ini:TIniFile;
 
+  // Variables del archivo de configuracion
+  const_remitente,const_destinatario,const_cc,const_bcc: String;
+  const_asunto,const_contenido: String;
 begin
+
+  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+
+  try
+     Ini:= TIniFile.Create(config_file);
+     const_remitente:=Ini.ReadString('mail','from','');
+     const_destinatario:=Ini.ReadString('mail','to','');
+     const_cc:=Ini.ReadString('mail','cc','');
+     const_bcc:=Ini.ReadString('mail','bcc','');
+     const_asunto:=Ini.ReadString('mail','subject','');
+     const_contenido:=Ini.ReadString('mail','content','');
+     //puerto_archivo := INI.ReadInteger('PARAMETROS','PUERTOF',7462);
+     Ini.Free;
+
+  except on e: Exception do
+  begin
+    WriteLn('Error al leer el archivo de configuracion: ',e.Message);
+    WriteLn(e.Message);
+    Exit;
+  end;
+
+  end;
 
   if remitente='' then begin var_remitente:=const_remitente; end
   else begin var_remitente:=remitente; end;

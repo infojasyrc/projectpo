@@ -27,13 +27,16 @@ type
 function data_oracle():TOracleConnection;
 var
   conexion_oracle: TOracleConnection;
+  parameters_conexion: TStringList;
+
 begin
+  parameters_conexion:=datos_saga_conexion();
   conexion_oracle:=TOracleConnection.Create(nil);
 
-  conexion_oracle.HostName:='172.16.105.37';
-  conexion_oracle.DatabaseName:='xe';
-  conexion_oracle.UserName:='saga';
-  conexion_oracle.Password:='saga2009';
+  conexion_oracle.HostName:=parameters_conexion[0];
+  conexion_oracle.DatabaseName:=parameters_conexion[1];
+  conexion_oracle.UserName:=parameters_conexion[2];
+  conexion_oracle.Password:=parameters_conexion[3];
 
   try
      conexion_oracle.Connected:=True;
@@ -410,7 +413,7 @@ end;
 
 procedure saga.DoRun;
 var
-  ErrorMsg: String;
+  //ErrorMsg: String;
   archivo: String;
   numero_parametros: Integer;
 begin
