@@ -68,7 +68,7 @@ var
   extension_archivo:ExtStr;
   file_information: Stat;
   i,items,estado: Integer;
-  descripcion: String;
+  descripcion,carpeta_general: String;
 
   // Variables de la cabecera del archivo PO
   orden_compra,referencia,referenciax: String;
@@ -101,6 +101,7 @@ begin
 
   // Inicializo variables relacionadas al archivo
   directorio:='/home/';
+  carpeta_general:=obtiene_general_path();
   nombre_archivo:='';
   extension_archivo:='';
   nombre_completo_archivo:='';
@@ -278,7 +279,8 @@ begin
           string_sql_details:=string_sql_details+' UNIMED_LONGTIUD, ALTO_CARTON, ANCHO_CARTON, LARGO_CARTON,';
           string_sql_details:=string_sql_details+' FECHA_MINIMA, ARCHIVO_MINIMA, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
           string_sql_details:=string_sql_details+' NUME_ORDEN) VALUES(''001'', ''';
-          string_sql_details:=string_sql_details+directorio+''', '''+nombre_completo_archivo+''', ''';
+          //string_sql_details:=string_sql_details+directorio+''', '''+nombre_completo_archivo+''', ''';
+          string_sql_details:=string_sql_details+carpeta_general+''', '''+nombre_completo_archivo+''', ''';
           string_sql_details:=string_sql_details+code_transaccion+''', '''+ci+''', '''+po_number+''', ';
           string_sql_details:=string_sql_details+IntToStr(correlativo_int)+', '''+style+''', '''+sku+''', ''';
           string_sql_details:=string_sql_details+item_description+''', '''+composicion+''', '''+num_ordcompra+''', '''+modelo+''', ';
@@ -333,7 +335,8 @@ begin
     string_sql:=string_sql+' MONTO_TOTAL, EMBARQUE, ANO_PRESE, CODI_ADUAN, CODI_REGI,';
     string_sql:=string_sql+' NUME_ORDEN, FECHA_ASIGNACION_ORDEN, FECHA_MINIMA, REFERENCIAX,';
     string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO, ESTADO, DESCRIPCION) VALUES(';
-    string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
+    //string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
+    string_sql:=string_sql+'''001'', '''+carpeta_general+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
     string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
     string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
     string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
@@ -359,7 +362,7 @@ begin
 
     query_oracle.Close;
     query_oracle.Free;
-    {
+
     asunto:='REGISTRO DE ARCHIVO PO: '+nombre_completo_archivo;
     contenido:='Archivo registrado: '+new_file+#10;
     contenido:=contenido+'Numero de items encontrados: '+IntToStr(items)+#10;
@@ -367,7 +370,6 @@ begin
 
     // Envia mensaje de notificacion de registro de archivo
     notificacion('','','','',asunto,contenido);
-    }
 
   except on E: Exception do
     begin
@@ -441,7 +443,7 @@ begin
   end;
 
   archivo:=ParamStr(1);
-  //WriteLn(archivo);
+  //WriteLn(ParamStr(0));
 
   if FileExists(archivo) then
   begin

@@ -47,7 +47,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="projectsaga"/>
+      <Filename Value="bin/projectsaga"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

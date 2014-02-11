@@ -10,8 +10,47 @@ uses
   procedure ejecuta_query(string_query:String);
   function datos_notificaciones():TStringList;
   function datos_saga_conexion():TStringList;
+  function obtiene_archivo_ini():String;
+  function obtiene_general_path():String;
 
 implementation
+
+function obtiene_archivo_ini():String;
+var
+  config_file: String;
+
+begin
+  config_file:=ExtractFilePath(ParamStr(0))+'config.ini';
+  result:=config_file;
+end;
+
+function obtiene_general_path():String;
+var
+  general_path,config_file: String;
+  Ini: TIniFile;
+
+begin
+  config_file:=obtiene_archivo_ini();
+
+  try
+     Ini:= TIniFile.Create(config_file);
+
+     general_path:=Ini.ReadString('po','path','');
+
+     Ini.Free;
+
+     result:=general_path;
+
+  except on e: Exception do
+  begin
+    WriteLn('Error al leer el archivo de configuracion: ',e.Message);
+    WriteLn(e.Message);
+    Exit;
+  end;
+
+  end;
+
+end;
 
 function datos_notificaciones():TStringList;
 var
@@ -21,7 +60,7 @@ var
   Ini:TIniFile;
 
 begin
-  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+  config_file:=obtiene_archivo_ini();
 
   try
      Ini:= TIniFile.Create(config_file);
@@ -59,7 +98,7 @@ var
   Ini:TIniFile;
 
 begin
-  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+  config_file:=obtiene_archivo_ini();
 
   try
      Ini:= TIniFile.Create(config_file);
@@ -86,7 +125,6 @@ begin
   parameters_conexion.Add(password);
 
   result:=parameters_conexion;
-
 end;
 
 procedure ejecuta_query(string_query:String);
@@ -143,9 +181,7 @@ begin
     WriteLn(e.Message);
     Exit;
   end;
-
   end;
-
 end;
 
 procedure notificacion(remitente:String;destinatario:String;cc:String;bcc:String;asunto:String;contenido:String);
@@ -158,9 +194,9 @@ var
   // Variables del archivo de configuracion
   const_remitente,const_destinatario,const_cc,const_bcc: String;
   const_asunto,const_contenido: String;
-begin
 
-  config_file:=GetCurrentDir+DirectorySeparator+'config.ini';
+begin
+  config_file:=obtiene_archivo_ini();
 
   try
      Ini:= TIniFile.Create(config_file);
