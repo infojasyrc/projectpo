@@ -27,8 +27,8 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <HostApplicationFilename Value="/home/dev/CodeTyphonProjects/projectpo/projectsaga"/>
-        <CommandLineParams Value="'/home/dev/Documents/FAB201305137561.PO'"/>
+        <HostApplicationFilename Value="/home/dev/CodeTyphonProjects/projectpo/bin/projectsaga"/>
+        <CommandLineParams Value="'/home/dev/Documents/Archivos_PO/FAB201401296081.PO'"/>
       </local>
     </RunParams>
     <Units Count="2">

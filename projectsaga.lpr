@@ -160,13 +160,18 @@ begin
     // Obtiene los datos de la cabecera: Linea 1 hasta la linea 3
     if i<=2 then
     begin
-      orden_compra:= Copy(line,11,15);
-      referencia:= orden_compra;
-      referenciax:= Copy(referencia,1,13);
       i:=i+1;
+
       if i=1 then
       begin
+        // Revisar el archivo de descripcion de las PO
+        // Revisar orden de compra: Desde el caracter 11 hasta longitud 15
+        orden_compra:= Copy(line,11,17);
+        referencia:= orden_compra;
+        referenciax:= Copy(referencia,1,15);
+
         fecha_transaccion:= Trim(Copy(line,26,8));
+
         if fecha_transaccion<>'' then
         begin
           fecha_transaccion:= Copy(line,32,2)+'-'+Copy(line,30,2)+'-'+Copy(line,26,4);
@@ -451,7 +456,7 @@ begin
   end;
 
   // stop program loop
-  //ReadLn();
+  ReadLn();
   Terminate;
 end;
 
