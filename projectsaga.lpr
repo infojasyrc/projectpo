@@ -456,7 +456,7 @@ begin
   end;
 
   // stop program loop
-  ReadLn();
+  //ReadLn();
   Terminate;
 end;
 
