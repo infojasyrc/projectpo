@@ -32,7 +32,12 @@ class MyHandler(PatternMatchingEventHandler):
         
         log_path = os.path.join(project_folder,"log")
         
-        try: 
+        try:
+            
+            with open(event.src_path, "r+") as fileObj:
+                read_data = fileObj.read()
+            fileObj.close()
+             
             # Execute command
             p = Popen(full_command, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             # Get output
@@ -49,6 +54,9 @@ class MyHandler(PatternMatchingEventHandler):
                 Popen(full_command_alert, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             
             self.register_log(log_path, name_log_file, content_alert) 
+        
+        except IOError as ioe:
+            print str(ioe)
             
         except CalledProcessError:
             err = traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
