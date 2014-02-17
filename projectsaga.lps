@@ -11,9 +11,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="443"/>
-        <CursorPos X="3" Y="460"/>
-        <UsageCount Value="117"/>
+        <TopLine Value="212"/>
+        <CursorPos X="55" Y="226"/>
+        <UsageCount Value="121"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -24,7 +24,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="19"/>
         <CursorPos X="27" Y="29"/>
-        <UsageCount Value="67"/>
+        <UsageCount Value="71"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -41,124 +41,124 @@
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="9" Column="114" TopLine="3"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="226" Column="1" TopLine="211"/>
       </Position1>
       <Position2>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="39" Column="40" TopLine="19"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="227" Column="1" TopLine="211"/>
       </Position2>
       <Position3>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="52" Column="39" TopLine="15"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="230" Column="1" TopLine="211"/>
       </Position3>
       <Position4>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="36" Column="65" TopLine="26"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="231" Column="1" TopLine="211"/>
       </Position4>
       <Position5>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="39" Column="68" TopLine="29"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="232" Column="1" TopLine="211"/>
       </Position5>
       <Position6>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="42" Column="44" TopLine="32"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="234" Column="1" TopLine="211"/>
       </Position6>
       <Position7>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="51" Column="65" TopLine="35"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="236" Column="1" TopLine="212"/>
       </Position7>
       <Position8>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="56" Column="5" TopLine="35"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="237" Column="1" TopLine="213"/>
       </Position8>
       <Position9>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="52" Column="44" TopLine="35"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="239" Column="1" TopLine="215"/>
       </Position9>
       <Position10>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="56" Column="5" TopLine="34"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="240" Column="1" TopLine="216"/>
       </Position10>
       <Position11>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="40" Column="50" TopLine="34"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="242" Column="1" TopLine="218"/>
       </Position11>
       <Position12>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="100" Column="4" TopLine="78"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="243" Column="1" TopLine="219"/>
       </Position12>
       <Position13>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="105" Column="3" TopLine="90"/>
+        <Caret Line="246" Column="1" TopLine="222"/>
       </Position13>
       <Position14>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="379" Column="29" TopLine="366"/>
+        <Caret Line="248" Column="1" TopLine="224"/>
       </Position14>
       <Position15>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="391" Column="10" TopLine="384"/>
+        <Caret Line="249" Column="41" TopLine="354"/>
       </Position15>
       <Position16>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="54" Column="52" TopLine="33"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="217" Column="1" TopLine="203"/>
       </Position16>
       <Position17>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="55" Column="32" TopLine="35"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="218" Column="1" TopLine="203"/>
       </Position17>
       <Position18>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="34" Column="22" TopLine="27"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="220" Column="1" TopLine="203"/>
       </Position18>
       <Position19>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="55" Column="5" TopLine="27"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="221" Column="1" TopLine="203"/>
       </Position19>
       <Position20>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="35" Column="59" TopLine="21"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="224" Column="1" TopLine="203"/>
       </Position20>
       <Position21>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="30" Column="28" TopLine="22"/>
+        <Caret Line="225" Column="1" TopLine="203"/>
       </Position21>
       <Position22>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="174" Column="53" TopLine="152"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="226" Column="1" TopLine="203"/>
       </Position22>
       <Position23>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="164" Column="3" TopLine="154"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="227" Column="1" TopLine="203"/>
       </Position23>
       <Position24>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="13" Column="1" TopLine="1"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="230" Column="1" TopLine="206"/>
       </Position24>
       <Position25>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="159" Column="40" TopLine="14"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="231" Column="1" TopLine="207"/>
       </Position25>
       <Position26>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="328" Column="74" TopLine="314"/>
+        <Caret Line="232" Column="1" TopLine="208"/>
       </Position26>
       <Position27>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="340" Column="77" TopLine="323"/>
+        <Caret Line="234" Column="1" TopLine="210"/>
       </Position27>
       <Position28>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="22" Column="16" TopLine="14"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="236" Column="1" TopLine="212"/>
       </Position28>
       <Position29>
         <Filename Value="projectsaga.lpr"/>
-        <Caret Line="103" Column="23" TopLine="93"/>
+        <Caret Line="237" Column="1" TopLine="213"/>
       </Position29>
       <Position30>
-        <Filename Value="envia_notificaciones.pas"/>
-        <Caret Line="33" Column="36" TopLine="13"/>
+        <Filename Value="projectsaga.lpr"/>
+        <Caret Line="229" Column="67" TopLine="215"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

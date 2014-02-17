@@ -81,9 +81,14 @@ var
   color,costo_unitario,moneda,unid_carton,cartones: String;
   unimed_longitud,alto_carton,ancho_carton,largo_carton: String;
 
-  correlativo_int,unidad_solicitadas_int,costo_unitario_real: Integer;
-  cartones_real,cantidad_productos,costo_total,costo_total_por_item: Integer;
+  correlativo_int,unidad_solicitadas_int: Integer;
+  cartones_real,cantidad_productos: Integer;
   alto_carton_real,ancho_carton_real,largo_carton_real: Integer;
+  cu_parte_entera,cu_parte_decimal: Integer;
+  costo_unitario_real,costo_total_por_item,costo_total: Real;
+  ff: TFloatFormat;
+  //format_string: String='###.##';
+  //valor:Double;
 
   string_sql,string_sql_details: String;
 
@@ -110,6 +115,7 @@ begin
   fecha_ultimo_acceso:='';
   estado:=0;
   descripcion:='';
+  costo_total:=0;
 
   // Inicializa variables relacionadas al envio de notificaciones
   asunto:='';
@@ -220,10 +226,16 @@ begin
           talla:= Trim(Copy(line,330,25));
           color:= Trim(Copy(line,355,25));
 
-          costo_unitario:= Copy(line,380,10);
-          if costo_unitario<>'' then begin costo_unitario_real:= StrToInt(costo_unitario); end
-          else begin costo_unitario_real:=0; end;
+          //costo_unitario:= Copy(line,380,10);
+          cu_parte_entera:= StrToInt(Copy(line,380,8));
+          cu_parte_decimal:= StrToInt(Copy(line,388,2));
+          costo_unitario:= IntToStr(cu_parte_entera)+'.'+IntToStr(cu_parte_decimal);
 
+          if costo_unitario<>'' then begin costo_unitario_real:= StrToFloat(costo_unitario); end
+          else begin costo_unitario_real:=0; end;
+          //WriteLn(costo_unitario);
+          //WriteLn(costo_unitario_real);
+          //Halt;
           moneda:= Copy(line,390,3);
           unid_carton:= Copy(line,393,5);
 
@@ -246,8 +258,13 @@ begin
           else begin largo_carton_real:=0; end;
 
           cantidad_productos:= cantidad_productos + unidad_solicitadas_int;
+          //WriteLn(unidad_solicitadas_int,'***',costo_unitario_real);
           costo_total_por_item:= unidad_solicitadas_int * costo_unitario_real;
           costo_total:=costo_total+costo_total_por_item;
+
+          //WriteLn(costo_total_por_item);
+          //WriteLn(FloatToStr(costo_total),'***',costo_total);
+
           {
           // Imprime las variables necesarias de cada detalle
           WriteLn('Codigo de Transaccion:', code_transaccion);
@@ -290,7 +307,8 @@ begin
           string_sql_details:=string_sql_details+IntToStr(correlativo_int)+', '''+style+''', '''+sku+''', ''';
           string_sql_details:=string_sql_details+item_description+''', '''+composicion+''', '''+num_ordcompra+''', '''+modelo+''', ';
           string_sql_details:=string_sql_details+IntToStr(unidad_solicitadas_int)+', '''+peso_neto+''', '''+unimed_peso+''', '''+talla+''', '''+color+''', ';
-          string_sql_details:=string_sql_details+IntToStr(costo_unitario_real)+', '''+moneda+''', '''+unid_carton+''', ''';
+          //string_sql_details:=string_sql_details+IntToStr(costo_unitario_real)+', '''+moneda+''', '''+unid_carton+''', ''';
+          string_sql_details:=string_sql_details+costo_unitario+', '''+moneda+''', '''+unid_carton+''', ''';
           string_sql_details:=string_sql_details+IntToStr(cartones_real)+''', '''+unimed_longitud+''', '+IntToStr(alto_carton_real)+', ';
           string_sql_details:=string_sql_details+IntToStr(ancho_carton_real)+', '+IntToStr(largo_carton_real)+', ';
           string_sql_details:=string_sql_details+'NULL, NULL, NULL, NULL, NULL, NULL)';
@@ -317,7 +335,7 @@ begin
 
   end;
   end;
-
+  //Halt;
   AssignFile(file_po, new_file);
   Reset(file_po);
   filesize_int:= FileSize(file_po);
@@ -343,11 +361,13 @@ begin
     //string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
     string_sql:=string_sql+'''001'', '''+carpeta_general+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
     string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
-    string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
+    //string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
+    string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+FloatToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
     string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
     string_sql:=string_sql+beneficiario+''', '+IntToStr(estado)+', '''+descripcion+''')';
 
-    //WriteLn('Cadena a Ejecutar es:'+string_sql);
+    //WriteLn(FloatToStr(costo_total));
+    //Halt;
 
     query_oracle.SQL.Clear;
     query_oracle.SQL.Text:= string_sql;
