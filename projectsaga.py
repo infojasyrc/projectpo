@@ -34,8 +34,10 @@ class MyHandler(PatternMatchingEventHandler):
         
         try:
             
-            with open(event.src_path, "r+") as fileObj:
+            with open(event.src_path, "r") as fileObj:
                 read_data = fileObj.read()
+                if not read_data:
+                    return
             fileObj.close()
              
             # Execute command
