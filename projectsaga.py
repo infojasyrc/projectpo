@@ -36,7 +36,7 @@ class MyHandler(PatternMatchingEventHandler):
                 content_alert = "Error al ingresar el archivo: %s" % event.src_path
                 command_alert = self.send_message(bin_path, user_to_notify, content_alert)
                 result_alert = self.execute_commands(command_alert)
-                print result_alert["message"]
+                #print result_alert["message"]
                 
             self.register_log(log_path, name_log_file, content_alert)
         
