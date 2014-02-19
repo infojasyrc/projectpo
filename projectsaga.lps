@@ -11,9 +11,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="212"/>
-        <CursorPos X="55" Y="226"/>
-        <UsageCount Value="121"/>
+        <TopLine Value="35"/>
+        <CursorPos X="31" Y="164"/>
+        <UsageCount Value="132"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -22,9 +22,9 @@
         <UnitName Value="envia_notificaciones"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="19"/>
-        <CursorPos X="27" Y="29"/>
-        <UsageCount Value="71"/>
+        <TopLine Value="73"/>
+        <CursorPos X="46" Y="130"/>
+        <UsageCount Value="82"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -33,134 +33,13 @@
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="5" Y="29"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="20"/>
       </Unit2>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="226" Column="1" TopLine="211"/>
-      </Position1>
-      <Position2>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="227" Column="1" TopLine="211"/>
-      </Position2>
-      <Position3>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="230" Column="1" TopLine="211"/>
-      </Position3>
-      <Position4>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="231" Column="1" TopLine="211"/>
-      </Position4>
-      <Position5>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="232" Column="1" TopLine="211"/>
-      </Position5>
-      <Position6>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="234" Column="1" TopLine="211"/>
-      </Position6>
-      <Position7>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="236" Column="1" TopLine="212"/>
-      </Position7>
-      <Position8>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="237" Column="1" TopLine="213"/>
-      </Position8>
-      <Position9>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="239" Column="1" TopLine="215"/>
-      </Position9>
-      <Position10>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="240" Column="1" TopLine="216"/>
-      </Position10>
-      <Position11>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="242" Column="1" TopLine="218"/>
-      </Position11>
-      <Position12>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="243" Column="1" TopLine="219"/>
-      </Position12>
-      <Position13>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="246" Column="1" TopLine="222"/>
-      </Position13>
-      <Position14>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="248" Column="1" TopLine="224"/>
-      </Position14>
-      <Position15>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="249" Column="41" TopLine="354"/>
-      </Position15>
-      <Position16>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="217" Column="1" TopLine="203"/>
-      </Position16>
-      <Position17>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="218" Column="1" TopLine="203"/>
-      </Position17>
-      <Position18>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="220" Column="1" TopLine="203"/>
-      </Position18>
-      <Position19>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="221" Column="1" TopLine="203"/>
-      </Position19>
-      <Position20>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="224" Column="1" TopLine="203"/>
-      </Position20>
-      <Position21>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="225" Column="1" TopLine="203"/>
-      </Position21>
-      <Position22>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="226" Column="1" TopLine="203"/>
-      </Position22>
-      <Position23>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="227" Column="1" TopLine="203"/>
-      </Position23>
-      <Position24>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="230" Column="1" TopLine="206"/>
-      </Position24>
-      <Position25>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="231" Column="1" TopLine="207"/>
-      </Position25>
-      <Position26>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="232" Column="1" TopLine="208"/>
-      </Position26>
-      <Position27>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="234" Column="1" TopLine="210"/>
-      </Position27>
-      <Position28>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="236" Column="1" TopLine="212"/>
-      </Position28>
-      <Position29>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="237" Column="1" TopLine="213"/>
-      </Position29>
-      <Position30>
-        <Filename Value="projectsaga.lpr"/>
-        <Caret Line="229" Column="67" TopLine="215"/>
-      </Position30>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectSession>
   <EditorMacros Count="0"/>
 </CONFIG>
