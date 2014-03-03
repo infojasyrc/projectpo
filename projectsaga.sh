@@ -1,61 +1,52 @@
-#!/bin/sh
- 
+ #! /bin/bash
+# Copyright (c) 1996-2012 My Company.
+# All rights reserved.
+#
+# Author: Bob Bobson, 2012
+#
+# Please send feedback to bob@bob.com
+#
+# /etc/init.d/testdaemon
+#
 ### BEGIN INIT INFO
-# Provides: myservice
-# Required-Start: $remote_fs $syslog
-# Required-Stop: $remote_fs $syslog
-# Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6
-# Short-Description: Put a short description of the service here
-# Description: Put a long description of the service here
-# Source: http://blog.scphillips.com/2013/07/getting-a-python-script-to-run-in-the-background-as-a-service-on-boot/
+# Provides: testdaemon
+# Required-Start:
+# Should-Start:
+# Required-Stop:
+# Should-Stop:
+# Default-Start:  3 5
+# Default-Stop:   0 1 2 6
+# Short-Description: Test daemon process
+# Description:    Runs up the test daemon process
 ### END INIT INFO
- 
-# Change the next 3 lines to suit where you install your script and what you want to call it
-#DIR=/usr/local/bin/projectsaga
-DIR=/home/dev/CodeTyphonProjects/projectpo
-DAEMON=$DIR/projectsaga.py
-DAEMON_NAME=projectsaga
- 
-# This next line determines what user the script runs as.
-# Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
-DAEMON_USER=dev
- 
-# The process ID of the script when it runs is stored here:
-PIDFILE=/var/run/$DAEMON_NAME.pid
- 
-. /lib/lsb/init-functions
- 
-do_start () {
-	log_daemon_msg "Starting system $DAEMON_NAME daemon"
-	start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON
-	log_end_msg $?
-}
-do_stop () {
-	log_daemon_msg "Stopping system $DAEMON_NAME daemon"
-	start-stop-daemon --stop --pidfile $PIDFILE --retry 10
-	log_end_msg $?
-}
- 
-case "$1" in
- 
-	start|stop)
-		do_${1}
-		;;
- 
-	restart|reload|force-reload)
-		do_stop
-		do_start
-		;;
- 
-	status)
-		status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
-		;;
-	*)
 
-		echo "Usage: /etc/init.d/$DAEMON_NAME {start|stop|restart|status}"
-		exit 1
-		;;
- 
+DIR=/home/dev/CodeTyphonProjects/projectpo
+DAEMON=$DIR/daemon_saga.py
+DAEMON_NAME=daemon_saga
+
+# Activate the python virtual environment
+    . /home/dev/.pyenv/versions/appsaga/bin/activate
+
+case "$1" in
+  start)
+    echo "Starting server"
+    # Start the daemon
+    python $DAEMON start
+    ;;
+  stop)
+    echo "Stopping server"
+    # Stop the daemon
+    python $DAEMON stop
+    ;;
+  restart)
+    echo "Restarting server"
+    python $DAEMON restart
+    ;;
+  *)
+    # Refuse to do other stuff
+    echo "Usage: /etc/init.d/testdaemon.sh {start|stop|restart}"
+    exit 1
+    ;;
 esac
+
 exit 0
