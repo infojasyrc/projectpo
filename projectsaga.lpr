@@ -172,9 +172,8 @@ begin
       begin
         // Revisar el archivo de descripcion de las PO
         // Revisar orden de compra: Desde el caracter 11 hasta longitud 15
-        orden_compra:= Copy(line,11,17);
-        referencia:= orden_compra;
-        referenciax:= Copy(referencia,1,15);
+        orden_compra:= Copy(line,11,15);
+        referenciax:= Copy(orden_compra,1,15);
 
         fecha_transaccion:= Trim(Copy(line,26,8));
 
@@ -192,6 +191,7 @@ begin
       begin
         beneficiario:= Trim(Copy(line,385,30));
         embarque:= Trim(Copy(line,26,2));
+        referencia:= orden_compra+embarque;
       end;
     end
     // Obtiene los detalles: Linea 4 hacia abajo
@@ -360,7 +360,7 @@ begin
     string_sql:=string_sql+' FLAG_MINIMA, TRADER, BENEFICIARIO, ESTADO, DESCRIPCION) VALUES(';
     //string_sql:=string_sql+'''001'', '''+directorio+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
     string_sql:=string_sql+'''001'', '''+carpeta_general+''', '''+nombre_completo_archivo+''', '+IntToStr(filesize_int)+', ''';
-    string_sql:=string_sql+fecha_creacion+''', '''+orden_compra+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
+    string_sql:=string_sql+fecha_creacion+''', '''+referencia+''', '+IntToStr(items)+', '+IntToStr(cantidad_productos)+', ''';
     //string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+IntToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
     string_sql:=string_sql+fecha_transaccion_final+''', '''+proveedor+''', '+FloatToStr(costo_total)+', '''+embarque+''', NULL, NULL, NULL,';
     string_sql:=string_sql+'NULL, NULL, NULL, '''+referenciax+''', ''F'', '''+trader+''', ''';
