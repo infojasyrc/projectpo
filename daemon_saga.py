@@ -15,8 +15,10 @@ from daemon import runner
 
 
 class DaemonSagaPO():
+    ''' This class runs as a daemon'''
    
     def __init__(self):
+        '''The constructor set the main parameters to convert this class to a daemon.'''
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
         self.stderr_path = '/dev/tty'
@@ -24,6 +26,7 @@ class DaemonSagaPO():
         self.pidfile_timeout = 5
            
     def run(self):
+        '''This function get the path to observed and execute the watchdog class.'''
         config_file = Config()
         path_to_watch = config_file.get_path_to_watch()
         
